@@ -3,12 +3,12 @@ from openpyxl import load_workbook
 
 class Graph(object):
     def __init__(self, file):
-        self.adj = {}
+        self.adj = {}   # Dictionary that maps a team to all of the nodes it is connected to.
 
         wb = load_workbook(filename=file, read_only=True)
         ws = wb['Sheet1']
-        team_ids = load_teams(file)
-        self.id_to_team_name = self.__get_id_to_team__(team_ids)
+        # team_ids = load_teams(file) (I don't think we need this)
+        # self.id_to_team_name = self.__get_id_to_team__(team_ids)
 
         for row in ws.iter_rows(min_row=2):
             teamA = row[0].value  # Name of Team A
@@ -17,7 +17,7 @@ class Graph(object):
             scoreA = row[1].value  # Score of Team A
             scoreB = row[2].value  # Score of Team B
 
-            self.__connect_nodes__(team_ids.get(teamA), team_ids.get(teamB), scoreA, scoreB)
+            self.__connect_nodes__(teamA, teamB, scoreA, scoreB)
 
     def __get_id_to_team__(self, team_ids):
         id_to_team = {}
@@ -44,10 +44,10 @@ class Graph(object):
     #  Prints the graph for testing purposes.
     def print_graph(self):
         for key, value in self.adj.items():
-            print("%-20s" % self.id_to_team_name.get(key))
+            print("%-20s" % key)
 
             for key2, value2 in value.items():
-                print("%-20sTeam %10s:%10s" % ("", self.id_to_team_name.get(key2), value2))
+                print("%-20sTeam %10s:%10s" % ("", key2, value2))
 
     def get_ranking_of(self, teamA):
         pass
