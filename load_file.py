@@ -1,13 +1,14 @@
 from openpyxl import load_workbook
 
-wb = load_workbook(filename='data.xlsx', read_only=True)
-ws = wb['Sheet1']
+def load_teams(file):
+    wb = load_workbook(filename=file, read_only=True)
+    ws = wb['Sheet1']
+    unique_id = 1
+    team_ids = {}
+    for row in ws.iter_rows(min_row=2):
+        teamA = row[0].value # Name of Team A
+        if teamA not in team_ids.keys():
+            team_ids[teamA] = unique_id
+            unique_id += 1
 
-for row in ws.iter_rows(min_row=2):
-    teamA = row[0].value
-    teamB = row[3].value
-
-    scoreA = row[1].value
-    scoreB = row[2].value
-
-    print("%-25s%-20s" % (teamA, teamB))
+    return team_ids
