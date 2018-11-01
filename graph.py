@@ -2,8 +2,9 @@ from load_file import load_teams
 from openpyxl import load_workbook
 
 class Graph(object):
-    def __init__(self, file):
+    def __init__(self, file, alg="Win"):
         self.adj = {}   # Dictionary that maps a team to all of the nodes it is connected to.
+        self.alg = alg
 
         wb = load_workbook(filename=file, read_only=True)
         ws = wb['Sheet1']
@@ -18,6 +19,7 @@ class Graph(object):
             scoreB = row[2].value  # Score of Team B
 
             self.__connect_nodes__(teamA, teamB, scoreA, scoreB)
+            self.__calculate_relations__()
 
     def __get_id_to_team__(self, team_ids):
         id_to_team = {}
@@ -27,27 +29,66 @@ class Graph(object):
         return id_to_team
 
     def __connect_nodes__(self, nodeA, nodeB, scoreA, scoreB):
-        key_list = self.adj.keys()
 
+        """
+        Structure of the Graph:
+
+        dictionary of teams -->
+            each team has a dictionary of other teams they faced -->
+                other teams they faced have a list of scores that the other team got
+
+        {
+            teamA:  {
+                        otherTeam:    [scores teamA got vs otherTeam],
+                        anotherTeam:  [scores teamA got vs anotherTeam],
+                        etc...
+                    },
+
+            teamB:  {
+                        otherTeam:    [scores teamB got vs otherTeam],
+                        anotherTeam:  [scores teamA got vs anotherTeam],
+                        etc...
+                    },
+            etc...
+        }
+        """
+
+        key_list = self.adj.keys() # list of all teams that are in the dictionary
+
+        # if team already exists check if it has a connection to other team
         if nodeA in key_list:
-            self.adj.get(nodeA)[nodeB] = scoreA
+            if nodeB in self.adj.get(nodeA).keys():
+                self.adj.get(nodeA)[nodeB].append(scoreA)  # add team's score to the list of scores it got vs other team
+            else:
+                self.adj.get(nodeA)[nodeB] = [scoreA] # add team's score to the list of scores it got vs other team
 
+        # if it doesn't exist add an entry with the team's relationship to the other team
         else:
-            self.adj[nodeA] = {nodeB : scoreA}
+            self.adj[nodeA] = {nodeB : [scoreA]}
 
+
+        # same process but for other team
         if nodeB in key_list:
-            self.adj.get(nodeB)[nodeA] = scoreB
+            if nodeA in self.adj.get(nodeB).keys():
+                self.adj.get(nodeB)[nodeA].append(scoreB)
+            else:
+                self.adj.get(nodeB)[nodeA] = [scoreB]
 
         else:
-            self.adj[nodeB] = {nodeA : scoreB}
+            self.adj[nodeB] = {nodeA : [scoreB]}
 
     #  Prints the graph for testing purposes.
     def print_graph(self):
+        print("%-20s%-25s%20s" % ("Team A", "Team B", "A's Score(s)"), end="")
+
         for key, value in self.adj.items():
-            print("%-20s" % key)
+            print("\n\n%-20s" % key)
 
             for key2, value2 in value.items():
-                print("%-20sTeam %10s:%10s" % ("", key2, value2))
+                print("%-20s%-25s%20s" % ("", key2, value2))
+
+    def __calculate_relations__(self):
+        pass
 
     def get_ranking_of(self, teamA):
         pass
