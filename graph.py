@@ -19,7 +19,8 @@ class Graph(object):
             scoreB = row[2].value  # Score of Team B
 
             self.__connect_nodes__(teamA, teamB, scoreA, scoreB)
-            self.__calculate_relations__()
+
+        self.__calculate_relations__()
 
     def __get_id_to_team__(self, team_ids):
         id_to_team = {}
@@ -85,13 +86,60 @@ class Graph(object):
             print("\n\n%-20s" % key)
 
             for key2, value2 in value.items():
-                print("%-20s%-25s%20s" % ("", key2, value2))
+                print("%-20s%-25s%20.2f" % ("", key2, value2))
 
     def __calculate_relations__(self):
+        if self.alg == "Win":
+            self.__win_alg__()
+
+        elif self.alg == "Score":
+            self.__score_alg__()
+
+        elif self.alg == "Win Score":
+            self.__win_score_alg__()
+
+    # calculates each team's individual relation to the team they have played using win_alg
+    def __win_alg__(self):
+        for teamA, matches in self.adj.items(): # loop through every team
+            for teamB, teamA_scores in matches.items(): # loop through every team the current team played
+
+                # if scores isn't a list then it has already been processed into a single value so skip it
+                if isinstance(teamA_scores, list):
+                    teamB_scores = self.adj.get(teamB)[teamA] # get opposing team's scores to compare
+
+                    teamA_record = 0
+                    teamB_record = 0
+                    games_played = len(teamB_scores)
+
+                    # loop through each score teamA got and compare it to what teamB got
+                    for i in range(len(teamA_scores)):
+                        if teamA_scores[i] > teamB_scores[i]: # team A won
+                            teamA_record += 1
+                            teamB_record -= 1
+
+                        elif teamA_scores[i] < teamB_scores[i]: # teamB won
+                            teamA_record -= 1
+                            teamB_record += 1
+
+                        else: # tie game so don't count it
+                            games_played -= 1
+
+                    # if neither team win all of the games then it is a nonzero path so avg each score instead
+                    if (teamA_record / games_played != 1) and (teamB_record / games_played != 1):
+                        teamA_record /= games_played
+                        teamB_record /= games_played
+
+                    self.adj.get(teamA)[teamB] = teamA_record
+                    self.adj.get(teamB)[teamA] = teamB_record
+
+    def __score_alg__(self):
+        pass
+
+    def __win_score_alg__(self):
         pass
 
     def get_ranking_of(self, teamA):
         pass
 
 graph = Graph("data.xlsx")
-graph.print_graph()
+# graph.print_graph()
