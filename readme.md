@@ -7,3 +7,5 @@
 * Ross Newman
 * Miguel Roberts
 * Nicholas Levin
+* Sebastian Wittrock
+* Daniel Choi
