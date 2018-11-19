@@ -1,6 +1,7 @@
+from openpyxl import load_workbook
+from classes import Team, Game, Manager
+
 def load_file(file):
-    from openpyxl import load_workbook
-    from classes import Team, Game, Manager
 
     M = Manager()
 
@@ -37,17 +38,5 @@ def load_file(file):
 
     return M
 
-if __name__ == '__main__':
-    Manager = load_file('data.xlsx')
-
-    team = Manager.get_teams()[0]
-
-    print(str(team) + "\n")
-
-    for game in team.get_games():
-        print(game)
-
-    # games = Manager.get_games()
-    #
-    # for game in games:
-    #     print(game)
+def get_chains(Team):
+    pass
