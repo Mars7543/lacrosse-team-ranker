@@ -98,3 +98,19 @@ class Manager():
     def add_game(self, game):
         self.games.append(game)
 
+    def print_teams(self):
+        teams = sorted(self.teams, key=lambda team: team.points, reverse=True)
+
+        place = 1
+        previous = None
+
+        for team in teams:
+            if place != 1:
+                if previous.points == team.points:
+                    print("|", team)
+            else:
+                print(place, team)
+
+            place += 1
+            previous = team
+

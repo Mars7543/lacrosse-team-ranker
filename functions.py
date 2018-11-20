@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 from classes import Team, Game, Manager
+from datetime import datetime
 
 def load_file(file):
 
@@ -20,7 +21,7 @@ def load_file(file):
         TeamA = M.get_team(teamA)
         TeamB = M.get_team(teamB)
 
-        # if Team with given name wasn't found in the list than create the team
+        # if a team with the given name wasn't found in the list than create the team
         if not TeamA:
             TeamA = Team(teamA)
 
@@ -38,5 +39,20 @@ def load_file(file):
 
     return M
 
-def get_chains(Team):
+def calculate_points(manager):
     pass
+
+def main(time_check=False):
+    start = datetime.now()
+
+    manager = load_file("data.xlsx")
+    calculate_points(manager)
+
+    manager.print_teams()
+
+    end = datetime.now()
+    if time_check:
+        print("\nElapsed Time: ", (end - start).total_seconds())
+
+
+main(time_check=True)
