@@ -1,8 +1,6 @@
-from classes import Team, Game, TeamManager, Level
+from classes import Level
 from excel_functions import load_file, write_file
-from copy import deepcopy
 from datetime import datetime
-import test
 
 
 def process_data(filename):
@@ -94,19 +92,3 @@ def run_score_win_alg(team_manager):
 
     end = datetime.now()
     print("\n\n%.1fs" % (end - start).total_seconds())
-
-
-def main(time_check=False):
-    start = datetime.now()
-
-    team_manager = process_data("data.xlsx")
-
-    run_win_alg(team_manager)
-    run_score_alg(team_manager)
-    run_score_win_alg(team_manager)
-
-    end = datetime.now()
-    print("\nElapsed Time: %.1fs" % (end - start).total_seconds())
-
-
-main(time_check=True)
