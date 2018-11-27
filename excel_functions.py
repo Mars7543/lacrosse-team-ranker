@@ -1,6 +1,5 @@
 from openpyxl import load_workbook, Workbook
 from classes import Team, Game, TeamManager, Level
-from datetime import datetime
 
 
 def load_file(file, sheet="Sheet1"):
@@ -9,7 +8,7 @@ def load_file(file, sheet="Sheet1"):
 
     # load excel sheet into an iterable object
     wb = load_workbook(filename=file, read_only=True)
-    ws = wb[sheet]
+    ws = wb.active
 
     # loop through every row
     for row in ws.iter_rows(min_row=2):

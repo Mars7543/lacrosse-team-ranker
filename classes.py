@@ -1,6 +1,3 @@
-from openpyxl import load_workbook
-
-
 class Team():
     def __init__(self, name):
         self.name = name
@@ -164,7 +161,7 @@ class Level():
             current_team = current_team_info["team"]
 
             # streak will be a 1 if all of the past games were wins or a -1 if the past games were all losses
-            streak = current_team_info.get("streak")
+            streak = current_team_info.get("streak", 0)
 
             games_played = current_team.get_games()
 
@@ -192,7 +189,7 @@ class Level():
 
                     # if the outcome follows the streak (or it is the first level), add the team to the next level
                     elif won == streak or not streak:
-                        next_level.append({"team": opponent, "won": [won], "streak": won})
+                        next_level.append({"team": opponent, "won": [won], "streak": won, "prev_streak": streak})
                         self.current_teams.append(opponent.get_name())
 
         """
@@ -206,6 +203,8 @@ class Level():
         for team_info in next_level: # only add teams that aren't in the list of checked teams to the next level
             team = team_info["team"].get_name()
             if team not in self.checked_teams:
+                if 1 in team_info["won"] and -1 in team_info["won"]:
+                    team_info["streak"] = 0
                 self.current_level.append(team_info)
 
         return self.current_level
